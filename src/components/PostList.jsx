@@ -11,7 +11,7 @@ export default function PostList() {
           // Check for valid network return
           throw new Error("Network error");
         }
-        return response.json; // Parse response
+        return response.json(); // Parse response
       })
       .then((data) => {
         setPosts(data);
@@ -22,16 +22,18 @@ export default function PostList() {
   });
 
   return (
-    <div className="flex items-center justify-center flex-col">
-        <p className="text-2xl">Post Feed</p>
-        <ul>
-            {posts.map((post) => (
-                <li key={post.id}>
-                    <p className="text-lg">{post.title}</p>
-                    <p className="">{post.body}</p>
-                </li>
-            ))}
-        </ul>
+    <div className="flex items-center justify-center flex-col max-w-screen-md mx-auto my-4">
+      <p className="text-2xl">Post Feed</p>
+      <ul>
+        {posts.map((post) => (
+          <div className="flex flex-col py-3">
+            <li key={post.id}>
+              <p className="text-xl underline">{post.title}</p>
+              <p className="">{post.body}</p>
+            </li>
+          </div>
+        ))}
+      </ul>
     </div>
-  )
+  );
 }
