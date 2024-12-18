@@ -23,7 +23,8 @@ export default function PostList() {
   }, []);
 
   const addPost = () => {
-    if (!newPost.title.trim() || !newPost.body.trim()) { // Alert and exit in case of empty fields
+    if (!newPost.title.trim() || !newPost.body.trim()) {
+      // Alert and exit in case of empty fields
       alert("Fields cannot be empty!");
       return;
     }
@@ -71,7 +72,10 @@ export default function PostList() {
                 <button className="bg-newell-gray w-20 h-10 rounded-md">
                   Edit
                 </button>
-                <button className="bg-red-500 w-20 h-10 rounded-md">
+                <button
+                  className="bg-red-500 w-20 h-10 rounded-md"
+                  onClick={() => deletePost(post.id)}
+                >
                   Delete
                 </button>
               </div>
