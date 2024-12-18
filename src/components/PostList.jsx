@@ -4,6 +4,7 @@ import "../index.css";
 export default function PostList() {
   const [posts, setPosts] = useState([]); // Posts from fetch stored in state
   const [newPost, setNewPost] = useState({ title: "", body: "" }); // State for building new posts
+  const [editID, setEditID] = useState(null); // State stores ID of target post for editing
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/posts")
@@ -38,6 +39,21 @@ export default function PostList() {
     setPosts(posts.filter((post) => post.id !== id)); // Build new list without desired post.
   };
 
+  const editPost = () => {
+    if (!newPost.title.trim() || !newPost.body.trim()) {
+        // Alert and exit in case of empty fields
+        alert("Fields cannot be empty!");
+        return;
+      }
+    const updatedPost = { ...newPost, id: editID };
+    const updatedPosts = posts.map((post) =>
+      post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+    );
+    setPosts(updatedPosts);
+    setNewPost({ title: "", body: "" });
+    setEditID(null);
+  };
+
   return (
     <div className="flex items-center justify-center flex-col max-w-screen-md mx-auto my-4 bg-newell-gray opacity-80 p-4 text-white rounded-md">
       <p className="text-2xl">Post Feed</p>
@@ -56,7 +72,9 @@ export default function PostList() {
           value={newPost.body}
           onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
         />
-        <button onClick={addPost}>Submit</button>
+        <button onClick={() => (editID ? editPost() : addPost())}>
+          {editID ? "Submit changes" : "Submit post"}
+        </button>
       </div>
 
       <ul>
@@ -69,7 +87,10 @@ export default function PostList() {
               <p className="text-xl underline">{post.title}</p>
               <p className="">{post.body}</p>
               <div className="flex flex-row justify-start items-centen space-x-10 text-lg m-2">
-                <button className="bg-newell-gray w-20 h-10 rounded-md">
+                <button
+                  className="bg-newell-gray w-20 h-10 rounded-md"
+                  onClick={() => setEditID(post.id)}
+                >
                   Edit
                 </button>
                 <button
