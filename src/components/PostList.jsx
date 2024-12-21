@@ -3,8 +3,11 @@ import "../index.css";
 
 export default function PostList() {
   const [posts, setPosts] = useState([]); // Posts from fetch stored in state
+  const [parsedPosts, setParsedPosts] = useState([]);
   const [newPost, setNewPost] = useState({ title: "", body: "" }); // State for building new posts
   const [editID, setEditID] = useState(null); // State stores ID of target post for editing
+  const [query, setQuery] = useState(""); // Stores search query
+  const [idFilter, setIdFilter] = useState("");
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/posts")
@@ -17,11 +20,30 @@ export default function PostList() {
       })
       .then((data) => {
         setPosts(data);
+        setParsedPosts(data);
       })
       .catch((err) => {
         console.error("Fetching error: ", err);
       });
   }, []);
+
+  useEffect(() => {
+    let parsed = posts;
+
+    // Filter by title (searchTerm)
+    if (query.trim() !== "") {
+      parsed = parsed.filter((post) =>
+        post.title.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+
+    // Filter by user ID (userIdFilter)
+    if (idFilter !== "") {
+      parsed = parsed.filter((post) => post.userId === Number(idFilter));
+    }
+
+    setParsedPosts(parsed);
+  }, [posts, query, idFilter]);
 
   const addPost = () => {
     if (!newPost.title.trim() || !newPost.body.trim()) {
@@ -29,37 +51,37 @@ export default function PostList() {
       alert("Fields cannot be empty!");
       return;
     }
-    const post = { ...newPost, id: posts.length + 1 }; // Finish building post by adding ID
+    const post = { ...newPost, id: posts.length + 1, userId: 0 }; // Finish building post by adding ID
     setPosts([post, ...posts]); // Add post to list of current posts
-    console.log(post);
     setNewPost({ title: "", body: "" }); // Reset newPost state, ready to build new post
   };
 
   const deletePost = (id) => {
-    setPosts(posts.filter((post) => post.id !== id)); // Build new list without desired post.
+    setPosts(posts.filter((post) => post.id !== id)); // Build new list without desired post
   };
 
   const editPost = () => {
     if (!newPost.title.trim() || !newPost.body.trim()) {
-        // Alert and exit in case of empty fields
-        alert("Fields cannot be empty!");
-        return;
-      }
-    const updatedPost = { ...newPost, id: editID };
-    const updatedPosts = posts.map((post) =>
-      post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+      // Alert and exit in case of empty fields
+      alert("Fields cannot be empty!");
+      return;
+    }
+    const updatedPost = { ...newPost, id: editID }; //Build "new" post, assign id of target
+    const updatedPosts = posts.map(
+      (post) =>
+        post.id === updatedPost.id ? { ...post, ...updatedPost } : post // Parse through posts, replace target post w/ updated post
     );
     setPosts(updatedPosts);
-    setNewPost({ title: "", body: "" });
-    setEditID(null);
+    setNewPost({ title: "", body: "" }); // Reset newPost state, ready to build new post
+    setEditID(null); // Reset editID, ready to edit/add new post
   };
 
   return (
     <div className="flex items-center justify-center flex-col max-w-screen-md mx-auto my-4 bg-newell-gray opacity-80 p-4 text-white rounded-md">
-      <p className="text-2xl">Post Feed</p>
+      <p className="text-4xl">Post Feed</p>
 
-      {/* Input field for adding/editing post */}
-      <div className="flex flex-col text-black sticky top-10">
+      {/* Input field for adding/editing post, search bar */}
+      <div className="flex flex-col text-black sticky top-10 m-4 space-y-2 bg-slate-700 rounded-lg p-4 w-full">
         <input
           type="text"
           placeholder="Title"
@@ -72,13 +94,36 @@ export default function PostList() {
           value={newPost.body}
           onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
         />
-        <button onClick={() => (editID ? editPost() : addPost())}>
+        <button
+          className="text-white bg-newell-gray rounded-md"
+          onClick={() => (editID ? editPost() : addPost())}
+        >
           {editID ? "Submit changes" : "Submit post"}
         </button>
+        <div className="flex flex-row p-4 mx-auto space-x-2">
+          <input
+            type="text"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <select
+            className="p-2 text-black rounded-md"
+            value={idFilter}
+            onChange={(e) => setIdFilter(e.target.value)}
+          >
+            <option value="">Filter by User ID</option>
+            {[...new Set(posts.map((post) => post.userId))].map((id) => (
+              <option key={id} value={id}>
+                User ID: {id}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <ul>
-        {posts.map((post) => (
+        {parsedPosts.map((post) => (
           <div
             className="flex flex-col p-4 bg-newell-blue rounded-lg m-4"
             key={post.id}
@@ -86,7 +131,8 @@ export default function PostList() {
             <li>
               <p className="text-xl underline">{post.title}</p>
               <p className="">{post.body}</p>
-              <div className="flex flex-row justify-start items-centen space-x-10 text-lg m-2">
+              <p className="text-sm">ID: {post.userId}</p>
+              <div className="flex flex-row justify-start items-center space-x-10 text-lg m-2">
                 <button
                   className="bg-newell-gray w-20 h-10 rounded-md"
                   onClick={() => setEditID(post.id)}

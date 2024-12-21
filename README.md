@@ -4,8 +4,7 @@ Front End Engineering Coding Exercise
 ## Task 1: Fetch and Display Data from a Public API
 Objective: Fetch and display data from a free, open-source API in a React component.
 Instructions:
-1. Use the JSONPlaceholder API (https://jsonplaceholder.typicode.com/posts) to fetch a list of
-posts.
+1. Use the JSONPlaceholder API (https://jsonplaceholder.typicode.com/posts) to fetch a list of posts.
 2. Create a React component named PostList.
 3. Use the useEffect hook to fetch posts from the API when the component mounts.
 4. Display the list of posts, showing the title and body for each post.
@@ -14,8 +13,7 @@ posts.
 Objective: Enhance the PostList component to allow users to add, edit, and delete posts.
 Instructions:
 1. Extend the PostList component from Task 1.
-2. Add functionality to manage the list of posts, allowing users to add new posts, edit existing
-posts, and delete posts.
+2. Add functionality to manage the list of posts, allowing users to add new posts, edit existing posts, and delete posts.
 3. Use React state to manage the list of posts.
 4. Include input fields and buttons for adding new posts.
 5. Each post should have an edit button to modify its details and a delete button to remove it
