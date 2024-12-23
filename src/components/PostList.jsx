@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import "../index.css";
 
+// Newell Brands Technical Assessment - Nikhil Dunna
+
 export default function PostList() {
   const [posts, setPosts] = useState([]); // Posts from fetch stored in state
-  const [parsedPosts, setParsedPosts] = useState([]);
+  const [parsedPosts, setParsedPosts] = useState([]); // Posts filtered and displayed
   const [newPost, setNewPost] = useState({ title: "", body: "" }); // State for building new posts
   const [editID, setEditID] = useState(null); // State stores ID of target post for editing
   const [query, setQuery] = useState(""); // Stores search query
-  const [idFilter, setIdFilter] = useState("");
+  const [idFilter, setIdFilter] = useState(""); // Stores user filter id
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/posts")
@@ -27,17 +29,18 @@ export default function PostList() {
       });
   }, []);
 
+  // Refreshes parsed posts
   useEffect(() => {
     let parsed = posts;
 
-    // Filter by title (searchTerm)
+    // Filter by title
     if (query.trim() !== "") {
       parsed = parsed.filter((post) =>
         post.title.toLowerCase().includes(query.toLowerCase())
       );
     }
 
-    // Filter by user ID (userIdFilter)
+    // Filter by user ID
     if (idFilter !== "") {
       parsed = parsed.filter((post) => post.userId === Number(idFilter));
     }
@@ -51,7 +54,7 @@ export default function PostList() {
       alert("Fields cannot be empty!");
       return;
     }
-    const post = { ...newPost, id: posts.length + 1, userId: 0 }; // Finish building post by adding ID
+    const post = { ...newPost, id: posts.length + 1, userId: 0 }; // Finish building post by adding IDs
     setPosts([post, ...posts]); // Add post to list of current posts
     setNewPost({ title: "", body: "" }); // Reset newPost state, ready to build new post
   };
@@ -64,6 +67,7 @@ export default function PostList() {
     if (!newPost.title.trim() || !newPost.body.trim()) {
       // Alert and exit in case of empty fields
       alert("Fields cannot be empty!");
+      setEditID(null); // To escape from editing only
       return;
     }
     const updatedPost = { ...newPost, id: editID }; //Build "new" post, assign id of target
@@ -95,7 +99,7 @@ export default function PostList() {
           onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
         />
         <button
-          className="text-white bg-newell-gray rounded-md"
+          className="text-white bg-newell-blue rounded-md"
           onClick={() => (editID ? editPost() : addPost())}
         >
           {editID ? "Submit changes" : "Submit post"}
@@ -131,7 +135,7 @@ export default function PostList() {
             <li>
               <p className="text-xl underline">{post.title}</p>
               <p className="">{post.body}</p>
-              <p className="text-sm">ID: {post.userId}</p>
+              <p className="text-sm">User ID: {post.userId}</p>
               <div className="flex flex-row justify-start items-center space-x-10 text-lg m-2">
                 <button
                   className="bg-newell-gray w-20 h-10 rounded-md"

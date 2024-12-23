@@ -1,6 +1,12 @@
 # Newell Brands Front End Engineering Task -- Nikhil (Nik) Dunna
 Front End Engineering Coding Exercise
 
+## Instructions
+1. Clone repo to local machine
+2. Run 'npm install'
+3. Run 'npm run dev'
+
+
 ## Task 1: Fetch and Display Data from a Public API
 Objective: Fetch and display data from a free, open-source API in a React component.
 Instructions:
